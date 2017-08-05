@@ -4,17 +4,16 @@
 // but you don't so you're going to write it from scratch:
 
 var stringifyJSON = function(obj) {
-   let helper = function(obj) {
 
 // =============================================================================
 // 			Primitives
 // =============================================================================
 
-   if(typeof obj === "number" || typeof obj === "boolean") {
+   if (typeof obj === "number" || typeof obj === "boolean") {
        return '' + obj;
    }
 
-   if(obj === null) {
+   if (obj === null) {
    	return "null";
    }
 
@@ -32,17 +31,17 @@ var stringifyJSON = function(obj) {
         if(obj.length <= 0){
               output.push([]);
                } else {
-               obj.forEach(function(e){
-                output.push(helper(e))
+               _.each(obj, function(ele){
+                output.push(stringifyJSON(ele))
     		});
            }
            return '[' + output + ']';
     }
 
-   if(obj === undefined) {
-	   	if(Array.isArray(obj)) {
+   if (obj === undefined) {
+	   	if (Array.isArray(obj)) {
 	   		return null;
-	   	} else if(typeof obj === 'object') {
+	   	} else if (typeof obj === 'object') {
 	   		return;
 	   	}
    }
@@ -52,7 +51,7 @@ var stringifyJSON = function(obj) {
 // =============================================================================
 
 
-   if(typeof obj === 'symbol') {
+   if (typeof obj === 'symbol') {
    	return;
    }
 
@@ -60,34 +59,32 @@ var stringifyJSON = function(obj) {
 // 			Objects
 // =============================================================================
 
-   if(typeof obj === 'object') {
-		if(Object.keys(obj).length > 0) {
-			for(key in obj) {
-				if(obj[key] instanceof Function) {
+   if (typeof obj === 'object') {
+
+   	let objKeys = Object.keys(obj);
+	let arrOfValues = [];
+	let keyOut;
+
+		if (objKeys.length > 0) {
+			for( key in obj) {
+				if (obj[key] instanceof Function) {
 					return '{}';
 				}
 			}
 
-			let objKeys = Object.keys(obj);
-			let arrOfValues = [];
-
-			objKeys.forEach(function(key) {
-				if(obj[key] !== 'function') {
-					var keyOut = '"' + key + '":' + helper(obj[key]);
-				} else {
-					'{}';
-				}
-
+			_.each(objKeys, function(key) {
+				if (!(obj[key] instanceof Function)) {
+					keyOut = '"' + key + '":' + stringifyJSON(obj[key]);
+				} 
 				arrOfValues.push(keyOut);
 			});
 			return '{' + arrOfValues + '}';
 		} else {
-			return '{}';
+		return '{}';
 		}
 	}   
-}
 
-   return helper(obj);
+   return stringifyJSON(obj);
 	 
 };
 
